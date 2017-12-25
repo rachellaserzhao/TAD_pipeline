@@ -42,19 +42,24 @@ CHRSIZE=[[chrsize]]
 JULIA=[[julia]]
 TADFINDER=[[tadfinder]]
 RES=[[res]]
-CHROM= [[chrom]]
+CHROM=[[chrom]]
+ADCORE=[[adcore]]
  
 ## Map reads to genome using bowtie2 (global alignment)
 
 $BWA mem -t $PROC $GENOME $INPUT_DIR/$R1  > $OUTPUT_DIR/alignment.R1.sam
 
-$SAMTOOLS view -b -@ $PROC $OUTPUT_DIR/alignment.R1.sam | $SAMTOOLS sort  -@ $PROC -n -o $OUTPUT_DIR/alignment.R1.bam
+$SAMTOOLS view -@ ADCORE -o $OUTPUT_DIR/alignment_unsorted.R1.bam $OUTPUT_DIR/alignment.R1.sam
+
+$SAMTOOLS sort  -@ ADCORE -n -o $OUTPUT_DIR/alignment.R1.bam $OUTPUT_DIR/alignment_unsorted.R1.bam
 
 rm -rf $OUTPUT_DIR/alignment.R1.sam
 
 $BWA mem -t $PROC $GENOME $INPUT_DIR/$R2  > $OUTPUT_DIR/alignment.R2.sam
 
-$SAMTOOLS view -b -@ $PROC $OUTPUT_DIR/alignment.R2.sam | $SAMTOOLS sort  -@ $PROC -n -o $OUTPUT_DIR/alignment.R2.bam
+$SAMTOOLS view -@ ADCORE -o $OUTPUT_DIR/alignment_unsorted.R2.bam $OUTPUT_DIR/alignment.R2.sam
+
+$SAMTOOLS sort  -@ ADCORE -n -o $OUTPUT_DIR/alignment.R2.bam $OUTPUT_DIR/alignment_unsorted.R2.bam
 
 rm -rf $OUTPUT_DIR/alignment.R2.sam
 
