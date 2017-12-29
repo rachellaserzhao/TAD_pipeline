@@ -45,10 +45,11 @@ RES=[[res]]
 CHROM=[[chrom]]
 ADCORE=[[adcore]]
  
-## Map reads to genome using bowtie2 (global alignment)
+## align R1 and R2 (fasta.gz) reads separately to reference genome(hg19/hg38) using BWA mem
 
 $BWA mem -t $PROC $GENOME $INPUT_DIR/$R1  > $OUTPUT_DIR/alignment.R1.sam
 
+## sort and convert sam to bam file them remove orginta
 $SAMTOOLS view -@ ADCORE -o $OUTPUT_DIR/alignment_unsorted.R1.bam $OUTPUT_DIR/alignment.R1.sam
 
 $SAMTOOLS sort  -@ ADCORE -n -o $OUTPUT_DIR/alignment.R1.bam $OUTPUT_DIR/alignment_unsorted.R1.bam
@@ -66,11 +67,11 @@ rm -rf $OUTPUT_DIR/alignment.R2.sam
 ## Pair R1 and R2 mates and filter reads
 $PYTHON $HICPRO_DIR/scripts/mergeSAM.py -f $OUTPUT_DIR/alignment.R1.bam -r $OUTPUT_DIR/alignment.R2.bam -o $OUTPUT_DIR/paired.bam
 
-## Hi-C pro steps
+## Hi-C pro mapping restriction fragments
 
 $PYTHON $HICPRO_DIR/scripts/mapped_2hic_fragments.py -a -f $RESFRAG -r $OUTPUT_DIR/paired.bam -o $OUTPUT_DIR/
 
-##matrix generation
+##matrix generation by Hi-C pro
 
 $HICPRO_DIR/scripts/build_matrix --binsize $BINSIZE --chrsizes $CHRSIZE --ifile $OUTPUT_DIR/paired.validPairs --oprefix $OUTPUT_DIR/matrix_$BINSIZE
 
