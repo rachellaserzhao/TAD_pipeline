@@ -1,4 +1,6 @@
+# TAD_pipeline
 
+config.ini file editing instruction:
 
 [westgrid]
 email = recipient of job status report 
