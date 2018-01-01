@@ -42,8 +42,11 @@ CHRSIZE=[[chrsize]]
 JULIA=[[julia]]
 TADFINDER=[[tadfinder]]
 RES=[[res]]
-CHROM=[[chrom]]
+BFILE1=[[bfile1]]
+BFILE2=[[bfile2]]
+RES=[[res]]
 ADCORE=$(($PROC-1))
+
 ## align R1 and R2 (fasta.gz) reads separately to reference genome(hg19/hg38) using BWA mem
 
 $BWA mem -t $PROC $GENOME $INPUT_DIR/$R1  > $OUTPUT_DIR/alignment.R1.sam
@@ -74,4 +77,4 @@ $PYTHON $HICPRO_DIR/scripts/mapped_2hic_fragments.py -a -f $RESFRAG -r $OUTPUT_D
 
 $HICPRO_DIR/scripts/build_matrix --binsize $BINSIZE --chrsizes $CHRSIZE --ifile $OUTPUT_DIR/paired.validPairs --oprefix $OUTPUT_DIR/matrix_$BINSIZE
 
-#$JULIA $TADFINDER $OUTPUT_DIR/matrix_$BINSIZE $TADFINDER/data/hg19_bins_file1 $#TADFINDER/data/hg19_bins_file2 res=$RES $CHROM $OUTPUT_DIR/TAD_chrom_$CHROM.bed
+$JULIA $TADFINDER $OUTPUT_DIR/matrix_$BINSIZE $BFILE1 $BFILE2 res=$RES $OUTPUT_DIR/TAD_$PREFIX.bed

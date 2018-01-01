@@ -76,8 +76,9 @@ def main (outdir, genome, genome_size):
     file_data = file_data.replace('[[resfrag]]', resfrag)
     file_data = file_data.replace('[[chrsize]]', genome_size)
     file_data = file_data.replace('[[binsize]]', binsize)
-   
-
+    file_data = file_data.replace('[[julia]]', julia)
+    file_data = file_data.replace('[[tadfinder]]', tadfinder)
+    file_data = file_data.replace('[[tadres]]', tadres)
     # Write PBS script #
     with open(outfile, 'w') as out_file:
         out_file.write(file_data)
@@ -115,7 +116,9 @@ if __name__ == "__main__":
 	chrsize_38 = westgrid_config['chrsize38']
 	indir = westgrid_config['indir']
 	template = westgrid_config['template']
-	    
+	julia = westgrid_config['julia']
+	tadfinder = westgrid_config['tadfinder']
+	tadres = westgrid_config['tadres']
     # Create output directories #
 	if not os.path.exists(os.path.abspath(options.output_dir)):
 		os.makedirs(os.path.abspath(options.output_dir))
