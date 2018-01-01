@@ -28,10 +28,8 @@ def parse_options():
 	parser.add_argument('-g', default='hg38', action='store', dest='genome', help="Genome assembly (hg19 or hg38; default = hg38)", metavar='<genome>')
 	parser.add_argument("-o", "--output-dir", default="./", action="store", dest="output_dir", help="Output directory will be pwd/output (default = ./)", metavar="<output_dir>")
 	parser.add_argument("-p", action="store", dest="prefix", required=True, help="Prefix (identifies output dir/files)", metavar="<prefix>")
-	'''
-	parser.add_argument("-q", "--qsub", default=False, action="store_true", dest="submit", help="Submit PBS script to queue (default = False)")
-	parser.add_argument("-w", "--walltime", default=168, action="store", type=int, dest="walltime", help="Walltime (in hours; default = 168; i.e. one week)", metavar="<walltime>")
-	'''
+	parser.add_argument("-q", "--qsub", action="store_true", default=False, dest="submit", help="Submit PBS script to queue (default = False)")
+	
 	options = parser.parse_args()
 	return options
 
@@ -56,25 +54,24 @@ def main (outdir, genome, genome_size):
         if not in_file.closed:
                 in_file.close()
     
-    # Replace arguments #
-    	file_data = file_data.replace('[[bwa]]', bwa)
-    	file_data = file_data.replace('[[python]]', python)
+    # Replace arguments in shell script templates #
+    file_data = file_data.replace('[[bwa]]', bwa)
+    file_data = file_data.replace('[[python]]', python)
 	file_data = file_data.replace('[[email]]', email)
-    	file_data = file_data.replace('[[fastqc]]', fastqc)
-    	file_data = file_data.replace('[[genome]]', genome)
+    file_data = file_data.replace('[[fastqc]]', fastqc)
+    file_data = file_data.replace('[[genome]]', genome)
    	file_data = file_data.replace('[[hours]]', walltime)
-    #	file_data = file_data.replace('[[macs2]]', config.get(section, "macs2"))
-    	file_data = file_data.replace('[[memory]]', memory)
-    	file_data = file_data.replace('[[output_dir]]', outdir)
+    file_data = file_data.replace('[[memory]]', memory)
+    file_data = file_data.replace('[[output_dir]]', outdir)
 	file_data = file_data.replace('[[input_dir]]',indir)
 	file_data = file_data.replace('[[picard]]', picard)
 	file_data = file_data.replace('[[prefix]]', options.prefix)
-    	file_data = file_data.replace('[[processors]]', processors)
-    	file_data = file_data.replace('[[queue]]', queue)
-    	file_data = file_data.replace('[[r1]]', options.r1)
-    	file_data = file_data.replace('[[r2]]', options.r2)
-    	file_data = file_data.replace('[[samtools]]', samtools)
-    	file_data = file_data.replace('[[trimmomatic]]', trimmomatic)
+    file_data = file_data.replace('[[processors]]', processors)
+    file_data = file_data.replace('[[queue]]', queue)
+    file_data = file_data.replace('[[r1]]', options.r1)
+    file_data = file_data.replace('[[r2]]', options.r2)
+    file_data = file_data.replace('[[samtools]]', samtools)
+    file_data = file_data.replace('[[trimmomatic]]', trimmomatic)
 	file_data = file_data.replace('[[hicpro_dir]]', hic)
 	file_data = file_data.replace('[[resfrag]]', resfrag)
 	file_data = file_data.replace('[[chrsize]]', genome_size)
@@ -82,9 +79,8 @@ def main (outdir, genome, genome_size):
 	file_data = file_data.replace('[[adcore]]',adcore)
 
     # Write PBS script #
-	outfile = outdir + '/' + options.prefix + '.pbs'
-    	with open(outfile, 'w') as out_file:
-        	out_file.write(file_data)
+    with open(outfile, 'w') as out_file:
+        out_file.write(file_data)
 	if not out_file.closed:
 		out_file.close()
 #-------------#
@@ -97,7 +93,8 @@ if __name__ == "__main__":
 	options = parse_options()
     # Get hostname #
 	hostname = socket.gethostname()
-    	westgrid_config = ConfigSectionMap(config.sections()[0])
+    # reading config.ini file
+    westgrid_config = ConfigSectionMap(config.sections()[0])
 	samtools = westgrid_config['samtools']
 	processors = westgrid_config['processors']
 	fastqc = westgrid_config['fastqc']
@@ -119,27 +116,26 @@ if __name__ == "__main__":
 	indir = westgrid_config['indir']
 	template = westgrid_config['template']
 	adcore = westgrid_config['processors'] - 1 
-    	# Create output directories #
+    
+    # Create output directories #
 	if not os.path.exists(os.path.abspath(options.output_dir)):
 		os.makedirs(os.path.abspath(options.output_dir))
 
 	if options.genome != "hg19" and options.genome != "hg38":
 		parser.error('invalid genome')
 	else:	
-		if options.genome == "hg19": 
+		if options.genome == "hg19":
 			genome = hg19
 			genome_size = chrsize_19
 		if options.genome == "hg38":
 			genome = hg38
 			genome_size = chrsize_38
-		outdir = os.path.abspath(options.output_dir)
-		
+		outdir = os.path.abspath(options.output_dir)	
+		outfile = outdir + '/' + options.prefix + '.pbs'
 		main(outdir,genome,genome_size)
-        '''
+    
 	if options.submit:
-        	if system == "qsub":
-            	os.system("qsub %s" % os.path.join(os.path.abspath(options.output_dir), options.prefix, "%s.pbs" % options.prefix))
-        	else: pass
-	'''
+    	subprocess.call(['qsub',outfile])
+	
 
 
