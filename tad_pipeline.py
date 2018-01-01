@@ -4,7 +4,7 @@ import ConfigParser
 import argparse
 import shutil
 import socket
-from subprocess import call
+import subprocess
 
 # Read configuration file #
 config = ConfigParser.ConfigParser()
@@ -49,40 +49,40 @@ def ConfigSectionMap(section):
 
 def main (outdir, genome, genome_size):
 	# Read template PBS script #
-	in_file = open(template, 'r')
-	file_data = in_file.read()
-        if not in_file.closed:
-                in_file.close()
+    in_file = open(template, 'r')
+    file_data = in_file.read()
+    if not in_file.closed:
+        in_file.close()
     
     # Replace arguments in shell script templates #
     file_data = file_data.replace('[[bwa]]', bwa)
     file_data = file_data.replace('[[python]]', python)
-	file_data = file_data.replace('[[email]]', email)
+    file_data = file_data.replace('[[email]]', email)
     file_data = file_data.replace('[[fastqc]]', fastqc)
     file_data = file_data.replace('[[genome]]', genome)
-   	file_data = file_data.replace('[[hours]]', walltime)
+    file_data = file_data.replace('[[hours]]', walltime)
     file_data = file_data.replace('[[memory]]', memory)
     file_data = file_data.replace('[[output_dir]]', outdir)
-	file_data = file_data.replace('[[input_dir]]',indir)
-	file_data = file_data.replace('[[picard]]', picard)
-	file_data = file_data.replace('[[prefix]]', options.prefix)
+    file_data = file_data.replace('[[input_dir]]',indir)
+    file_data = file_data.replace('[[picard]]', picard)
+    file_data = file_data.replace('[[prefix]]', options.prefix)
     file_data = file_data.replace('[[processors]]', processors)
     file_data = file_data.replace('[[queue]]', queue)
     file_data = file_data.replace('[[r1]]', options.r1)
     file_data = file_data.replace('[[r2]]', options.r2)
     file_data = file_data.replace('[[samtools]]', samtools)
     file_data = file_data.replace('[[trimmomatic]]', trimmomatic)
-	file_data = file_data.replace('[[hicpro_dir]]', hic)
-	file_data = file_data.replace('[[resfrag]]', resfrag)
-	file_data = file_data.replace('[[chrsize]]', genome_size)
-	file_data = file_data.replace('[[binsize]]', binsize)
-	file_data = file_data.replace('[[adcore]]',adcore)
+    file_data = file_data.replace('[[hicpro_dir]]', hic)
+    file_data = file_data.replace('[[resfrag]]', resfrag)
+    file_data = file_data.replace('[[chrsize]]', genome_size)
+    file_data = file_data.replace('[[binsize]]', binsize)
+   
 
     # Write PBS script #
     with open(outfile, 'w') as out_file:
         out_file.write(file_data)
-	if not out_file.closed:
-		out_file.close()
+    if not out_file.closed:
+	out_file.close()
 #-------------#
 # Main        #
 #-------------#
@@ -115,8 +115,7 @@ if __name__ == "__main__":
 	chrsize_38 = westgrid_config['chrsize38']
 	indir = westgrid_config['indir']
 	template = westgrid_config['template']
-	adcore = westgrid_config['processors'] - 1 
-    
+	    
     # Create output directories #
 	if not os.path.exists(os.path.abspath(options.output_dir)):
 		os.makedirs(os.path.abspath(options.output_dir))
@@ -134,8 +133,7 @@ if __name__ == "__main__":
 		outfile = outdir + '/' + options.prefix + '.pbs'
 		main(outdir,genome,genome_size)
     
-	if options.submit:
-    	subprocess.call(['qsub',outfile])
-	
-
+		if options.submit:
+                    subprocess.call(['chmod','+x',outfile])
+    	    		subprocess.call(['qsub',outfile])
 
