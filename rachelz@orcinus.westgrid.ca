@@ -134,8 +134,8 @@ if __name__ == "__main__":
 		outfile = outdir + '/' + options.prefix + '.pbs'
 		main(outdir,genome,genome_size)
     
-		if options.submit:
-    		subprocess.call(['qsub',outfile])
+	if options.submit:
+    	subprocess.call(['qsub',outfile])
 	
 
 
