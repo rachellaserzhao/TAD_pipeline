@@ -119,9 +119,11 @@ if __name__ == "__main__":
 	julia = westgrid_config['julia']
 	tadfinder = westgrid_config['tadfinder']
 	tadres = westgrid_config['tadres']
-    # Create output directories #
+	
+	# Create output directories #
 	if not os.path.exists(os.path.abspath(options.output_dir)):
 		os.makedirs(os.path.abspath(options.output_dir))
+
 
 	if options.genome != "hg19" and options.genome != "hg38":
 		parser.error('invalid genome')
@@ -139,4 +141,6 @@ if __name__ == "__main__":
 		if options.submit:
                     subprocess.call(['chmod','+x',outfile])
     	    		subprocess.call(['qsub',outfile])
+
+
 

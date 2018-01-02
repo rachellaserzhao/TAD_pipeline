@@ -44,7 +44,7 @@ TADFINDER=[[tadfinder]]
 RES=[[res]]
 BFILE1=[[bfile1]]
 BFILE2=[[bfile2]]
-RES=[[res]]
+RES=[[tadres]]
 ADCORE=$(($PROC-1))
 
 ## align R1 and R2 (fasta.gz) reads separately to reference genome(hg19/hg38) using BWA mem

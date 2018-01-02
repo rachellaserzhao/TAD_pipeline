@@ -1,5 +1,7 @@
 # TAD_pipeline
 
+This pipeline is written to 
+
 config.ini file editing instruction:
 
 [westgrid]
