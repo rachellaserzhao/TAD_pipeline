@@ -77,8 +77,12 @@ def main (outdir, genome, genome_size):
     file_data = file_data.replace('[[chrsize]]', genome_size)
     file_data = file_data.replace('[[binsize]]', binsize)
     file_data = file_data.replace('[[julia]]', julia)
-    file_data = file_data.replace('[[tadfinder]]', tadfinder)
+    file_data = file_data.replace('[[tadfinder]]', (tadfinder + '/run_MrTADFinder.jl'))
+    file_data = file_data.replace('[[bfile1]]', bfile1)
+    file_data = file_data.replace('[[bfile2]]', bfile2)
     file_data = file_data.replace('[[tadres]]', tadres)
+
+
     # Write PBS script #
     with open(outfile, 'w') as out_file:
         out_file.write(file_data)
@@ -131,11 +135,17 @@ if __name__ == "__main__":
 		if options.genome == "hg19":
 			genome = hg19
 			genome_size = chrsize_19
+			bfile1 = tadfinder + '/data_hg19/bins_fiile1'
+			bfile2 = tadfinder + '/data_hg19/bins_fiile2'
 		if options.genome == "hg38":
 			genome = hg38
 			genome_size = chrsize_38
+			bfile1 = tadfinder + '/data_hg38/bins_fiile1'
+			bfile2 = tadfinder + '/data_hg38/bins_fiile2'
+		
 		outdir = os.path.abspath(options.output_dir)	
-		outfile = outdir + '/' + options.prefix + '.pbs'
+		outfile = outdir + '/' + options.prefix + '.pbs'		
+
 		main(outdir,genome,genome_size)
     
 		if options.submit:
